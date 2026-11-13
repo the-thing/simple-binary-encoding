@@ -18,10 +18,15 @@ package uk.co.real_logic.sbe.codec.java;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import uk.co.real_logic.sbe.otf.Types;
 
 import java.nio.ByteOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TypesTest
 {
@@ -142,5 +147,15 @@ class TypesTest
             total += (1 << i);
             assertEquals((int)total, buffer.getInt(bufferIndex, BYTE_ORDER));
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {Long.MIN_VALUE, -9223372036854775807L, -1L, 0L, 1L, Long.MAX_VALUE})
+    void shouldAppendUnsignedInt64(final long value)
+    {
+        final StringBuilder out = new StringBuilder();
+
+        Types.appendUnsignedInt64(value, out);
+        assertEquals(Long.toUnsignedString(value), out.toString());
     }
 }
