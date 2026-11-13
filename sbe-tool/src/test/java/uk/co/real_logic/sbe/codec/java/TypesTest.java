@@ -18,10 +18,16 @@ package uk.co.real_logic.sbe.codec.java;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.Test;
+import uk.co.real_logic.sbe.PrimitiveType;
+import uk.co.real_logic.sbe.PrimitiveValue;
+import uk.co.real_logic.sbe.ir.Encoding;
+import uk.co.real_logic.sbe.otf.Types;
 
 import java.nio.ByteOrder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TypesTest
 {
@@ -142,5 +148,60 @@ class TypesTest
             total += (1 << i);
             assertEquals((int)total, buffer.getInt(bufferIndex, BYTE_ORDER));
         }
+    }
+
+    @Test
+    void shouldNotExpandJsonDirectBufferFloatToDouble()
+    {
+        final StringBuilder sb = new StringBuilder();
+        final MutableDirectBuffer buffer = new UnsafeBuffer(new byte[4]);
+
+        Encoding encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        buffer.putFloat(0, PrimitiveValue.MIN_VALUE_FLOAT);
+        Types.appendAsJsonString(sb, buffer, 0, encoding);
+        assertEquals("-3.4028235E38", sb.toString());
+
+        sb.setLength(0);
+        encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        buffer.putFloat(0, PrimitiveValue.MAX_VALUE_FLOAT);
+        Types.appendAsJsonString(sb, buffer, 0, encoding);
+        assertEquals("3.4028235E38", sb.toString());
+
+        sb.setLength(0);
+        encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        buffer.putFloat(0, Float.MIN_NORMAL);
+        Types.appendAsJsonString(sb, buffer, 0, encoding);
+        assertEquals("1.1754944E-38", sb.toString());
+
+        sb.setLength(0);
+        encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        buffer.putFloat(0, 0.1f);
+        Types.appendAsJsonString(sb, buffer, 0, encoding);
+        assertEquals("0.1", sb.toString());
+    }
+
+    @Test
+    void shouldNotExpandJsonPrimitiveValueFloatToDouble()
+    {
+        final StringBuilder sb = new StringBuilder();
+
+        Encoding encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        Types.appendAsJsonString(sb, new PrimitiveValue(PrimitiveValue.MIN_VALUE_FLOAT, 4), encoding);
+        assertEquals("-3.4028235E38", sb.toString());
+
+        sb.setLength(0);
+        encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        Types.appendAsJsonString(sb, new PrimitiveValue(PrimitiveValue.MAX_VALUE_FLOAT, 4), encoding);
+        assertEquals("3.4028235E38", sb.toString());
+
+        sb.setLength(0);
+        encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        Types.appendAsJsonString(sb, new PrimitiveValue(Float.MIN_NORMAL, 4), encoding);
+        assertEquals("1.1754944E-38", sb.toString());
+
+        sb.setLength(0);
+        encoding = new Encoding.Builder().primitiveType(PrimitiveType.FLOAT).build();
+        Types.appendAsJsonString(sb, new PrimitiveValue(0.1f, 4), encoding);
+        assertEquals("0.1", sb.toString());
     }
 }
