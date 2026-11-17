@@ -359,9 +359,9 @@ public class JavaDtoGenerator implements CodeGenerator
             lengthBuilder
                 .append(indent).append(INDENT).append("encodedLength += ")
                 .append(groupDecoderClassName).append(".sbeHeaderSize();\n\n")
-                .append(indent).append(INDENT).append("for (").append(groupDtoClassName).append(" group : ")
-                .append("this.").append(fieldName).append(")\n")
+                .append(indent).append(INDENT).append("for (int i = 0; i < ").append(fieldName).append(".size(); i++)\n")
                 .append(indent).append(INDENT).append("{\n")
+                .append(indent).append(INDENT).append(INDENT).append(groupDtoClassName).append(" group = ").append(fieldName).append(".get(i);\n")
                 .append(indent).append(INDENT).append(INDENT)
                 .append("encodedLength += group.computeEncodedLength();\n")
                 .append(indent).append(INDENT).append("}\n\n");
@@ -1156,9 +1156,9 @@ public class JavaDtoGenerator implements CodeGenerator
                 .append(indent).append(groupEncoderTypeName).append(" ").append(groupEncoderVarName)
                 .append(" = encoder.").append(formattedPropertyName)
                 .append("Count(").append(formattedPropertyName).append(".size());\n\n")
-                .append(indent).append("for (").append(groupDtoTypeName).append(" group : ")
-                .append(formattedPropertyName).append(")\n")
+                .append(indent).append("for (int i = 0; i < ").append(formattedPropertyName).append(".size(); i++)\n")
                 .append(indent).append("{\n")
+                .append(indent).append(INDENT).append(groupDtoTypeName).append(" group = ").append(formattedPropertyName).append(".get(i);\n")
                 .append(indent).append(INDENT).append(groupDtoTypeName)
                 .append(".encodeWith(").append(groupEncoderVarName).append(".next(), group);\n")
                 .append(indent).append("}\n\n");
