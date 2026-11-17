@@ -402,7 +402,23 @@ public class Message
             if (null != field.groupFields())
             {
                 final int groupBlockLength = computeAndValidateOffsets(node, field.groupFields(), 0);
+                final CompositeType dimensionType = field.dimensionType();
 
+                if (null != dimensionType && dimensionType.getType("blockLength") instanceof EncodedDataType)
+                {
+                    final EncodedDataType t = (EncodedDataType)dimensionType.getType("blockLength");
+                    final long max = null != t.maxValue() ?
+                            t.maxValue().longValue() : t.primitiveType().maxValue().longValue();
+                    final long actual = Math.max(field.blockLength(), groupBlockLength);
+                    if (actual > max) {
+                        handleError(node, "group \"" + field.name() + "\" blockLength=" + actual +
+                                " exceeds max of blockLength type: " + max);
+                    }
+                }
+
+                System.out.println("Group block length: " + groupBlockLength + ", " + field.blockLength());
+
+                // System.out.println("Group block length: " + groupBlockLength);
                 validateBlockLength(node, field.blockLength(), groupBlockLength);
                 field.computedBlockLength(Math.max(field.blockLength(), groupBlockLength));
 

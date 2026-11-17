@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<messageSchema package="extension.foo"
+               id="15"
+               semanticVersion="5.2"
+               description="Unit Test"
+               byteOrder="littleEndian">
+    <types>
+        <composite name="messageHeader" description="Message identifiers and length of message root">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+        <composite name="groupSizeEncoding" description="Repeating group dimensions" >
+            <type name="blockLength" primitiveType="uint8"/>
+            <type name="numInGroup" primitiveType="uint8"/>
+        </composite>
+        <composite name="varStringEncoding" description="Variable length UTF-8 String.">
+            <type name="length" primitiveType="uint32" maxValue="1073741824"/>
+            <type name="varData" primitiveType="uint8" length="0" characterEncoding="UTF-8"/>
+        </composite>
+        <type name="ascii256" primitiveType="char" semanticType="String" length="256" characterEncoding="ASCII"/>
+    </types>
+    <message name="MessageWithInvalidGroupEncoding" id="1">
+        <field name="id" id="0" type="uint64"/>
+        <group name="people" id="10" dimensionType="groupSizeEncoding">
+            <field name="firstName" id="11" type="ascii256"/>
+        </group>
+    </message>
+</messageSchema>

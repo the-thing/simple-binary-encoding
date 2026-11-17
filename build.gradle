@@ -338,6 +338,7 @@ project(':sbe-tool') {
         args = ['src/test/resources/json-printer-test-schema.xml',
                 'src/test/resources/composite-elements-schema.xml',
                 'src/test/resources/field-order-check-schema.xml',
+                'src/test/resources/error-handler-invalid-block-length.xml',
                 'src/test/resources/floating-point-infinity-schema.xml']
     }
 

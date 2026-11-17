@@ -385,6 +385,8 @@ public class SbeTool
             .warningsFatal(Boolean.parseBoolean(System.getProperty(VALIDATION_WARNINGS_FATAL)))
             .suppressOutput(Boolean.parseBoolean(System.getProperty(VALIDATION_SUPPRESS_OUTPUT)));
 
+        System.out.println("ml_test, sbeSchemaFilename: " + sbeSchemaFilename);
+
         final Path path = Paths.get(sbeSchemaFilename);
         try (InputStream in = new BufferedInputStream(Files.newInputStream(path)))
         {

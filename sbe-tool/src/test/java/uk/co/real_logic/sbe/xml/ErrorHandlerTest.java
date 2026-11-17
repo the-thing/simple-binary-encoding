@@ -229,6 +229,21 @@ class ErrorHandlerTest
         fail("expected IllegalStateException");
     }
 
+    @Test
+    void dupa() throws Exception {
+        try (InputStream in = Tests.getLocalResource("error-handler-invalid-block-length.xml"))
+        {
+            final ParserOptions options = ParserOptions.builder().suppressOutput(false).warningsFatal(true).build();
+            parse(in, options);
+        }
+        catch (final IllegalStateException ex) {
+            assertEquals("had 1 warning", ex.getMessage());
+            return;
+        }
+
+        fail("expected IllegalStateException");
+    }
+
     private static void parseTestXmlAddToMap(
         final Map<String, Type> map, final String xPathExpr, final String xml, final ErrorHandler handler)
         throws ParserConfigurationException, XPathExpressionException, IOException, SAXException
